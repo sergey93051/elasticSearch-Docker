@@ -1,0 +1,15 @@
+
+sudo update-rc.d docker disable
+
+sudo systemctl status apache2	
+#docker
+
+docker
+
+sudo docker ps -a
+
+docker run -it ubuntu
+
+docker-compose up -d 
+
+sudo docker exec -it app bash

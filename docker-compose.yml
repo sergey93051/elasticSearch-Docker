@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes: 
+      - ./:/var/www/
+      - ./_docker/nginx/conf.d/:/etc/nginx/conf.d/
+    ports:
+      - '8333:80'   
+    
+    container_name: app_nginx
+
+  app:
+    build:
+      context: .
+      dockerfile: _docker/app/Dockerfile
+    volumes:
+      - ./:/var/www
+    container_name: app
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.5.3
+    container_name: elasticsearch
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - ./_docker/elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - 9300:9200
+
+       
+  # db:
+  #   image: mysql:8.0
+  #   restart: always
+  #   volumes:
+  #     - ./tmp/db:/var/lib/mysql
+  #   environment:
+  #       MYSQL_DATABASE: laravel
+  #       MYSQL_ROOT_PASSWORD: root
+  #   ports:
+  #     - 8101:3306
+  #   command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+  #   container_name: db
